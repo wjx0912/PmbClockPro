@@ -995,7 +995,7 @@ void CPmbClockDlg::OnConfigDatefont()
 
 void CPmbClockDlg::initUI()
 {
-	// load config
+	// (1)load config
 	BOOL bOk;
 	UINT size;
 	LPBYTE pbyte;
@@ -1014,23 +1014,32 @@ void CPmbClockDlg::initUI()
 	else
 		m_startupBoot = false;
 
-	m_showHide = false;
+	m_showHide = true;
 
-	// TODO: (1)hide taskbar, (2)show tray icon and menu
+	// (2)hide taskbar on windows
+	LONG exStyle = GetWindowLong(m_hWnd, GWL_EXSTYLE);
+	exStyle &= ~WS_EX_APPWINDOW;   // 移除任务栏标志
+	exStyle |= WS_EX_TOOLWINDOW;   // 工具窗口
+	SetWindowLong(m_hWnd, GWL_EXSTYLE, exStyle);
+
+  // (3)show tray icon and menu
 }
 
 void CPmbClockDlg::OnCmdAbout()
 {
   CString aboutMsg;
-  aboutMsg.Format(L"PMB Clock\r\n\r\nBuild date: %S\r\nBuild time: %S\r\n\r\n(c) 2026 Some Software", __DATE__, __TIME__);
+  aboutMsg.Format(L"PMB Clock 0.0.2\r\n\r\nBuild date: %S\r\nBuild time: %S\r\n\r\n(c) 2026 Some Software", __DATE__, __TIME__);
   AfxMessageBox(aboutMsg, MB_OK | MB_ICONINFORMATION);
 }
 
 void CPmbClockDlg::OnCmdShowHide()
 {
 	m_showHide = !m_showHide;
-
-	// TODO: show or hide window
+  // show or hide main window
+  if (m_showHide)
+    ShowWindow(SW_SHOW);
+  else
+    ShowWindow(SW_HIDE);
 }
 
 void CPmbClockDlg::OnCmdExitApp()
