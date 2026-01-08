@@ -65,7 +65,7 @@ BOOL CPmbClockApp::InitInstance()
 	// Change the registry key under which our settings are stored
 	// TODO: You should modify this string to be something appropriate
 	// such as the name of your company or organization
-	SetRegistryKey(_T("PMB"));
+	SetRegistryKey(_T("PmbClockApp"));
 
 	WCHAR* smutex = L"pmb::clockApp";
 	m_hMutex = OpenMutex(MUTEX_ALL_ACCESS, 0, smutex);

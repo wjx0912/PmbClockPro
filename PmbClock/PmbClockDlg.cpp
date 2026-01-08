@@ -255,7 +255,7 @@ BEGIN_MESSAGE_MAP(CPmbClockDlg, CDialogEx)
 	ON_COMMAND(ID_CMD_ABOUT, &CPmbClockDlg::OnCmdAbout)
 	ON_COMMAND(ID_CMD_SHOW_HIDE, &CPmbClockDlg::OnCmdShowHide)
 	ON_COMMAND(ID_CMD_EXIT_APP, &CPmbClockDlg::OnCmdExitApp)
-	ON_COMMAND(ID_CONFIG_START_ON_BOOT, &CPmbClockDlg::OnConfigStartOnBoot)
+	ON_COMMAND(ID_CMD_RESTORECONFIG, &CPmbClockDlg::OnCmdRestoreConfig)
 	ON_MESSAGE(WM_TRAYICON, &CPmbClockDlg::OnTrayIcon)
 	ON_WM_DESTROY()
 END_MESSAGE_MAP()
@@ -850,8 +850,6 @@ void CPmbClockDlg::_createMenu(CMenu &menu)
 			pSubMenu->CheckMenuItem(ID_CONFIG_DATE, MF_CHECKED | MF_BYCOMMAND);
 		if (m_transparent)
 			pSubMenu->CheckMenuItem(ID_CONFIG_TRANSPARENT, MF_CHECKED | MF_BYCOMMAND);
-		if (m_startupBoot)
-			pSubMenu->CheckMenuItem(ID_CONFIG_START_ON_BOOT, MF_CHECKED | MF_BYCOMMAND);
 		if (m_showHide)
 			pSubMenu->CheckMenuItem(ID_CMD_SHOW_HIDE, MF_CHECKED | MF_BYCOMMAND);
 	}
@@ -1010,19 +1008,6 @@ void CPmbClockDlg::OnConfigDatefont()
 void CPmbClockDlg::initUI()
 {
 	// (1)load config
-	BOOL bOk;
-	UINT size;
-	LPBYTE pbyte;
-
-
-	if (bOk = theApp.GetProfileBinary(_T(PROFILE_REGISTRY), L"startupBoot", &pbyte, &size))
-	{
-		m_startupBoot = true;
-		free(pbyte);
-	}
-	else
-		m_startupBoot = false;
-
 	m_showHide = true;
 
 	// (2)hide taskbar on windows
@@ -1057,12 +1042,12 @@ void CPmbClockDlg::OnCmdExitApp()
 	AfxGetMainWnd()->SendMessage(WM_CLOSE);
 }
 
-void CPmbClockDlg::OnConfigStartOnBoot()
-{
-	m_startupBoot = !m_startupBoot;
-	theApp.WriteProfileBinary(_T(PROFILE_REGISTRY), L"startupBoot", (LPBYTE)&m_startupBoot, sizeof(m_startupBoot));
 
-	// TODO
+void CPmbClockDlg::OnCmdRestoreConfig()
+{
+	// resotre all config by WriteProfileBinary
+	theApp.WriteProfileString(_T(PROFILE_REGISTRY), nullptr, nullptr);
+	AfxMessageBox(L"Please restart the program!", MB_OK);
 }
 
 void CPmbClockDlg::AddTrayIcon()

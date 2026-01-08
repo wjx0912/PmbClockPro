@@ -59,7 +59,6 @@ protected:
 	HBITMAP m_hBitmap;
 
 	bool m_transparent;
-	bool m_startupBoot;
 	bool m_showHide;
 	bool m_bdate;
 	CFont m_dfont;
@@ -99,7 +98,7 @@ protected:
 	afx_msg void OnCmdAbout();
 	afx_msg void OnCmdShowHide();
 	afx_msg void OnCmdExitApp();
-	afx_msg void OnConfigStartOnBoot();
+	afx_msg void OnCmdRestoreConfig();
 	LRESULT OnTrayIcon(WPARAM wParam, LPARAM lParam);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
   
