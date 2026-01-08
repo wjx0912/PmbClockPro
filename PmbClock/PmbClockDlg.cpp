@@ -1007,16 +1007,19 @@ void CPmbClockDlg::OnConfigDatefont()
 
 void CPmbClockDlg::initUI()
 {
-	// (1)load config
+  // (1) register a global event, if program already start, just active it
+  // TODO
+
+	// (2)load config
 	m_showHide = true;
 
-	// (2)hide taskbar on windows
+	// (3)hide taskbar on windows
 	LONG exStyle = GetWindowLong(m_hWnd, GWL_EXSTYLE);
 	exStyle &= ~WS_EX_APPWINDOW;   // 移除任务栏标志
 	exStyle |= WS_EX_TOOLWINDOW;   // 工具窗口
 	SetWindowLong(m_hWnd, GWL_EXSTYLE, exStyle);
 
-  // (3)show tray icon and menu
+  // (4)show tray icon and menu
   AddTrayIcon();
 }
 
