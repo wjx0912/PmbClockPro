@@ -8,7 +8,7 @@
 
 
 #define WM_TASKBAR	(WM_USER + 1)
-#define WM_TRAYICON (WM_APP + 16)
+#define WM_TRAYICON (WM_USER + 2)
 
 #define PMB_WINDOW_MINIM_SIZEX	60
 #define PMB_WINDOW_MINIM_SIZEY	30
@@ -100,9 +100,15 @@ protected:
 	afx_msg void OnCmdShowHide();
 	afx_msg void OnCmdExitApp();
 	afx_msg void OnConfigStartOnBoot();
+	LRESULT OnTrayIcon(WPARAM wParam, LPARAM lParam);
 
 private:
+	void _createMenu(CMenu &menu);
 	void initUI();
 	void AddTrayIcon();
 	void RemoveTrayIcon();
+	void ShowTrayMenu();
+
+public:
+	afx_msg void OnDestroy();
 };

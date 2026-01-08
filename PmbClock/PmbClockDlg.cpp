@@ -247,6 +247,8 @@ BEGIN_MESSAGE_MAP(CPmbClockDlg, CDialogEx)
 	ON_COMMAND(ID_CMD_SHOW_HIDE, &CPmbClockDlg::OnCmdShowHide)
 	ON_COMMAND(ID_CMD_EXIT_APP, &CPmbClockDlg::OnCmdExitApp)
 	ON_COMMAND(ID_CONFIG_START_ON_BOOT, &CPmbClockDlg::OnConfigStartOnBoot)
+	ON_MESSAGE(WM_TRAYICON, &CPmbClockDlg::OnTrayIcon)
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -823,12 +825,8 @@ afx_msg LRESULT CPmbClockDlg::OnTaskbar(WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-
-
-
-void CPmbClockDlg::OnRButtonDown(UINT nFlags, CPoint point)
+void CPmbClockDlg::_createMenu(CMenu &menu)
 {
-	CMenu menu;
 	menu.LoadMenu(IDR_MENU_CONFIG);
 	if (menu.m_hMenu)
 	{
@@ -847,10 +845,17 @@ void CPmbClockDlg::OnRButtonDown(UINT nFlags, CPoint point)
 			pSubMenu->CheckMenuItem(ID_CONFIG_START_ON_BOOT, MF_CHECKED | MF_BYCOMMAND);
 		if (m_showHide)
 			pSubMenu->CheckMenuItem(ID_CMD_SHOW_HIDE, MF_CHECKED | MF_BYCOMMAND);
-		ClientToScreen(&point);
-		pSubMenu->TrackPopupMenu(TPM_LEFTALIGN, point.x, point.y, this);
 	}
-	
+}
+
+void CPmbClockDlg::OnRButtonDown(UINT nFlags, CPoint point)
+{
+	CMenu menu;
+	_createMenu(menu);
+
+	ClientToScreen(&point);
+	CMenu* pSubMenu = menu.GetSubMenu(0);
+	pSubMenu->TrackPopupMenu(TPM_LEFTALIGN, point.x, point.y, this);
 	CDialogEx::OnRButtonDown(nFlags, point);
 }
 
@@ -1047,6 +1052,8 @@ void CPmbClockDlg::OnConfigStartOnBoot()
 {
 	m_startupBoot = !m_startupBoot;
 	theApp.WriteProfileBinary(_T(PROFILE_REGISTRY), L"startupBoot", (LPBYTE)&m_startupBoot, sizeof(m_startupBoot));
+
+	// TODO
 }
 
 void CPmbClockDlg::AddTrayIcon()
@@ -1071,4 +1078,47 @@ void CPmbClockDlg::RemoveTrayIcon()
     nid.uID = IDR_MAINFRAME;
 
     Shell_NotifyIcon(NIM_DELETE, &nid);
+}
+
+void CPmbClockDlg::OnDestroy()
+{
+	CDialogEx::OnDestroy();
+
+	// TODO: Add your message handler code here
+	RemoveTrayIcon();
+}
+
+LRESULT CPmbClockDlg::OnTrayIcon(WPARAM wParam, LPARAM lParam)
+{
+	if (wParam != IDR_MAINFRAME)
+		return 0;
+
+	if (lParam == WM_RBUTTONUP)
+	{
+		ShowTrayMenu();
+	}
+	else if (lParam == WM_LBUTTONDBLCLK)
+	{
+		//ShowMainWindow();
+	}
+
+	return 0;
+}
+
+void CPmbClockDlg::ShowTrayMenu()
+{
+	CMenu menu;
+  _createMenu(menu);
+
+	CMenu* pPopup = menu.GetSubMenu(0);
+	POINT pt;
+	GetCursorPos(&pt);
+	SetForegroundWindow();
+	pPopup->TrackPopupMenu(
+		TPM_RIGHTBUTTON | TPM_BOTTOMALIGN,
+		pt.x, pt.y,
+		this
+	);
+
+	PostMessage(WM_NULL);
 }
