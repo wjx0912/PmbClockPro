@@ -7,7 +7,6 @@
 #define IDS_ABOUTBOX                    101
 #define IDD_PMBCLOCK_DIALOG             102
 #define IDR_MAINFRAME                   128
-#define IDI_ICON1                       130
 #define IDR_MENU_CONFIG                 131
 #define ID_CONFIG_MINUTES               32771
 #define ID_CONFIG_SECONDS               32772

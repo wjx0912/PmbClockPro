@@ -749,9 +749,9 @@ void CPmbClockDlg::write_icon()
 	WCHAR lpszTip[] = L"Mouse is on the Icon !!";
 
 	HINSTANCE hInst =
-		AfxFindResourceHandle(MAKEINTRESOURCE(IDI_ICON1), RT_GROUP_ICON);
+		AfxFindResourceHandle(MAKEINTRESOURCE(IDR_MAINFRAME), RT_GROUP_ICON);
 	hIcon = (HICON)LoadImage(hInst,
-		MAKEINTRESOURCE(IDI_ICON1),
+		MAKEINTRESOURCE(IDR_MAINFRAME),
 		IMAGE_ICON,
 		16,
 		16,
@@ -794,7 +794,7 @@ void CPmbClockDlg::remove_icon()
 
 	tnid.cbSize = sizeof(NOTIFYICONDATA);
 	tnid.hWnd = m_hWnd;
-	tnid.uID = IDI_ICON1;
+	tnid.uID = IDR_MAINFRAME;
 
 	// call to Shell_NotifyIcon with NIM_DEL parameter
 
@@ -1003,12 +1003,7 @@ void CPmbClockDlg::initUI()
 
 	if (bOk = theApp.GetProfileBinary(_T(PROFILE_REGISTRY), L"startupBoot", &pbyte, &size))
 	{
-		if (m_startupBoot = (size == sizeof(bool) && *pbyte))
-		{
-			LONG ExtendedStyle = GetWindowLong(GetSafeHwnd(), GWL_EXSTYLE);
-			SetWindowLong(GetSafeHwnd(), GWL_EXSTYLE, ExtendedStyle | WS_EX_LAYERED);
-			::SetLayeredWindowAttributes(GetSafeHwnd(), m_bkColor, 200, LWA_COLORKEY);
-		}
+		m_startupBoot = true;
 		free(pbyte);
 	}
 	else
@@ -1023,6 +1018,7 @@ void CPmbClockDlg::initUI()
 	SetWindowLong(m_hWnd, GWL_EXSTYLE, exStyle);
 
   // (3)show tray icon and menu
+  AddTrayIcon();
 }
 
 void CPmbClockDlg::OnCmdAbout()
@@ -1051,4 +1047,28 @@ void CPmbClockDlg::OnConfigStartOnBoot()
 {
 	m_startupBoot = !m_startupBoot;
 	theApp.WriteProfileBinary(_T(PROFILE_REGISTRY), L"startupBoot", (LPBYTE)&m_startupBoot, sizeof(m_startupBoot));
+}
+
+void CPmbClockDlg::AddTrayIcon()
+{
+    NOTIFYICONDATA nid = {};
+    nid.cbSize = sizeof(NOTIFYICONDATA);
+    nid.hWnd = m_hWnd;
+    nid.uID = IDR_MAINFRAME;
+    nid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
+    nid.uCallbackMessage = WM_TRAYICON;
+    nid.hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+    _tcscpy_s(nid.szTip, _T("PmbClock"));
+
+    Shell_NotifyIcon(NIM_ADD, &nid);
+}
+
+void CPmbClockDlg::RemoveTrayIcon()
+{
+    NOTIFYICONDATA nid = {};
+    nid.cbSize = sizeof(NOTIFYICONDATA);
+    nid.hWnd = m_hWnd;
+    nid.uID = IDR_MAINFRAME;
+
+    Shell_NotifyIcon(NIM_DELETE, &nid);
 }
