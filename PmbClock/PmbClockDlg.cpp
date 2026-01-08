@@ -39,6 +39,10 @@ public:
 // Implementation
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual void OnOK();
+	virtual void OnCancel();
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
@@ -1029,7 +1033,7 @@ void CPmbClockDlg::initUI()
 void CPmbClockDlg::OnCmdAbout()
 {
   CString aboutMsg;
-  aboutMsg.Format(L"PMB Clock 0.0.2\r\n\r\nBuild date: %S\r\nBuild time: %S\r\n\r\n(c) 2026 Some Software", __DATE__, __TIME__);
+  aboutMsg.Format(L"PMB Clock 0.0.2\r\nBuild time: %S %S\r\n\r\n(c) 2026 Some Software\r\nhttps://github.com/wjx0912/", __DATE__, __TIME__);
   AfxMessageBox(aboutMsg, MB_OK | MB_ICONINFORMATION);
 }
 
@@ -1099,7 +1103,7 @@ LRESULT CPmbClockDlg::OnTrayIcon(WPARAM wParam, LPARAM lParam)
 	}
 	else if (lParam == WM_LBUTTONDBLCLK)
 	{
-		//ShowMainWindow();
+		OnCmdShowHide();
 	}
 
 	return 0;
@@ -1121,4 +1125,32 @@ void CPmbClockDlg::ShowTrayMenu()
 	);
 
 	PostMessage(WM_NULL);
+}
+BOOL CAboutDlg::PreTranslateMessage(MSG* pMsg)
+{
+	// TODO: Add your specialized code here and/or call the base class
+	if (pMsg->message == WM_KEYDOWN)
+	{
+		if (pMsg->wParam == VK_RETURN ||
+			pMsg->wParam == VK_ESCAPE)
+		{
+			return TRUE; // ³ÔµôÏûÏ¢
+		}
+	}
+
+	return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+void CAboutDlg::OnOK()
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+	//CDialogEx::OnOK();
+}
+
+void CAboutDlg::OnCancel()
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+	//CDialogEx::OnCancel();
 }
