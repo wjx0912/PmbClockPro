@@ -58,6 +58,8 @@ protected:
 	HBITMAP m_hBitmap;
 
 	bool m_transparent;
+	bool m_startupBoot;
+	bool m_showHide;
 	bool m_bdate;
 	CFont m_dfont;
 	COLORREF m_dColor;
@@ -93,4 +95,9 @@ protected:
 	afx_msg void OnConfigColor();
 	afx_msg void OnConfigDate();
 	afx_msg void OnConfigDatefont();
+	afx_msg void OnCmdAbout();
+	afx_msg void OnCmdShowHide();
+	afx_msg void OnCmdExitApp();
+	afx_msg void OnConfigStartOnBoot();
+	void initUI();
 };

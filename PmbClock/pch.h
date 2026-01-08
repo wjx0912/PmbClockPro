@@ -10,7 +10,7 @@
 // add headers that you want to pre-compile here
 #include "framework.h"
 
-#define PROFILE_REGISTRY	"Clock"
+#define PROFILE_REGISTRY	"PmbClockPro"
 
 
 #endif //PCH_H

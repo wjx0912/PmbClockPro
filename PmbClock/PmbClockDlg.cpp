@@ -15,6 +15,9 @@
 #define new DEBUG_NEW
 #endif
 
+//#pragma warning(push)
+#pragma warning(disable : 4244)
+//#pragma warning(pop)
 
 #define PMB_CLOCK_TIMER_	12345
 
@@ -240,6 +243,10 @@ BEGIN_MESSAGE_MAP(CPmbClockDlg, CDialogEx)
 	ON_COMMAND(ID_CONFIG_COLOR, &CPmbClockDlg::OnConfigColor)
 	ON_COMMAND(ID_CONFIG_DATE, &CPmbClockDlg::OnConfigDate)
 	ON_COMMAND(ID_CONFIG_DATEFONT, &CPmbClockDlg::OnConfigDatefont)
+	ON_COMMAND(ID_CMD_ABOUT, &CPmbClockDlg::OnCmdAbout)
+	ON_COMMAND(ID_CMD_SHOW_HIDE, &CPmbClockDlg::OnCmdShowHide)
+	ON_COMMAND(ID_CMD_EXIT_APP, &CPmbClockDlg::OnCmdExitApp)
+	ON_COMMAND(ID_CONFIG_START_ON_BOOT, &CPmbClockDlg::OnConfigStartOnBoot)
 END_MESSAGE_MAP()
 
 
@@ -272,6 +279,8 @@ BOOL CPmbClockDlg::OnInitDialog()
 
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
+
+	initUI();
 
 	BOOL bOk;
 	UINT size;
@@ -834,6 +843,10 @@ void CPmbClockDlg::OnRButtonDown(UINT nFlags, CPoint point)
 			pSubMenu->CheckMenuItem(ID_CONFIG_DATE, MF_CHECKED | MF_BYCOMMAND);
 		if (m_transparent)
 			pSubMenu->CheckMenuItem(ID_CONFIG_TRANSPARENT, MF_CHECKED | MF_BYCOMMAND);
+		if (m_startupBoot)
+			pSubMenu->CheckMenuItem(ID_CONFIG_START_ON_BOOT, MF_CHECKED | MF_BYCOMMAND);
+		if (m_showHide)
+			pSubMenu->CheckMenuItem(ID_CMD_SHOW_HIDE, MF_CHECKED | MF_BYCOMMAND);
 		ClientToScreen(&point);
 		pSubMenu->TrackPopupMenu(TPM_LEFTALIGN, point.x, point.y, this);
 	}
@@ -977,4 +990,56 @@ void CPmbClockDlg::OnConfigDatefont()
 		theApp.WriteProfileBinary(_T(PROFILE_REGISTRY), L"dcolor", (LPBYTE)&m_dColor, sizeof(m_dColor));
 		theApp.WriteProfileBinary(_T(PROFILE_REGISTRY), L"dfont", (LPBYTE)&lf, sizeof(lf));
 	}
+}
+
+
+void CPmbClockDlg::initUI()
+{
+	// load config
+	BOOL bOk;
+	UINT size;
+	LPBYTE pbyte;
+
+
+	if (bOk = theApp.GetProfileBinary(_T(PROFILE_REGISTRY), L"startupBoot", &pbyte, &size))
+	{
+		if (m_startupBoot = (size == sizeof(bool) && *pbyte))
+		{
+			LONG ExtendedStyle = GetWindowLong(GetSafeHwnd(), GWL_EXSTYLE);
+			SetWindowLong(GetSafeHwnd(), GWL_EXSTYLE, ExtendedStyle | WS_EX_LAYERED);
+			::SetLayeredWindowAttributes(GetSafeHwnd(), m_bkColor, 200, LWA_COLORKEY);
+		}
+		free(pbyte);
+	}
+	else
+		m_startupBoot = false;
+
+	m_showHide = false;
+
+	// TODO: (1)hide taskbar, (2)show tray icon and menu
+}
+
+void CPmbClockDlg::OnCmdAbout()
+{
+  CString aboutMsg;
+  aboutMsg.Format(L"PMB Clock\r\n\r\nBuild date: %S\r\nBuild time: %S\r\n\r\n(c) 2026 Some Software", __DATE__, __TIME__);
+  AfxMessageBox(aboutMsg, MB_OK | MB_ICONINFORMATION);
+}
+
+void CPmbClockDlg::OnCmdShowHide()
+{
+	m_showHide = !m_showHide;
+
+	// TODO: show or hide window
+}
+
+void CPmbClockDlg::OnCmdExitApp()
+{
+	AfxGetMainWnd()->SendMessage(WM_CLOSE);
+}
+
+void CPmbClockDlg::OnConfigStartOnBoot()
+{
+	m_startupBoot = !m_startupBoot;
+	theApp.WriteProfileBinary(_T(PROFILE_REGISTRY), L"startupBoot", (LPBYTE)&m_startupBoot, sizeof(m_startupBoot));
 }
