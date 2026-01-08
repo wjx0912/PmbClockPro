@@ -75,7 +75,7 @@ BOOL CPmbClockApp::InitInstance()
 	else
 	{
 		
-		AfxMessageBox(_T("Ya se encuentra ejecutando la aplicacion!"), MB_ICONSTOP);
+		AfxMessageBox(_T("application already run!"), MB_ICONSTOP);
 		return FALSE;
 	}
 
