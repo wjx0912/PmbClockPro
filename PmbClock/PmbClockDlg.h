@@ -101,7 +101,8 @@ protected:
 	afx_msg void OnCmdExitApp();
 	afx_msg void OnConfigStartOnBoot();
 	LRESULT OnTrayIcon(WPARAM wParam, LPARAM lParam);
-
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+  
 private:
 	void _createMenu(CMenu &menu);
 	void initUI();

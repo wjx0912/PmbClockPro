@@ -40,13 +40,18 @@ public:
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	virtual void OnOK();
-	virtual void OnCancel();
+	virtual BOOL OnInitDialog();
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
 {
+}
+
+BOOL CAboutDlg::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+	
+	return TRUE;
 }
 
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
@@ -1126,31 +1131,17 @@ void CPmbClockDlg::ShowTrayMenu()
 
 	PostMessage(WM_NULL);
 }
-BOOL CAboutDlg::PreTranslateMessage(MSG* pMsg)
+BOOL CPmbClockDlg::PreTranslateMessage(MSG* pMsg)
 {
-	// TODO: Add your specialized code here and/or call the base class
-	if (pMsg->message == WM_KEYDOWN)
+	// 拦截所有 ESC 和 Enter 相关的消息
+	if (pMsg->message == WM_KEYDOWN || pMsg->message == WM_KEYUP || 
+		pMsg->message == WM_CHAR || pMsg->message == WM_SYSCHAR)
 	{
-		if (pMsg->wParam == VK_RETURN ||
-			pMsg->wParam == VK_ESCAPE)
+		if (pMsg->wParam == VK_RETURN || pMsg->wParam == VK_ESCAPE)
 		{
-			return TRUE; // 吃掉消息
+			return TRUE; // 完全吃掉消息
 		}
 	}
 
 	return CDialogEx::PreTranslateMessage(pMsg);
-}
-
-void CAboutDlg::OnOK()
-{
-	// TODO: Add your specialized code here and/or call the base class
-
-	//CDialogEx::OnOK();
-}
-
-void CAboutDlg::OnCancel()
-{
-	// TODO: Add your specialized code here and/or call the base class
-
-	//CDialogEx::OnCancel();
 }
