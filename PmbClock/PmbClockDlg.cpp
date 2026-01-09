@@ -1025,8 +1025,9 @@ void CPmbClockDlg::initUI()
 
 void CPmbClockDlg::OnCmdAbout()
 {
+	// 资源文件的版本号也改一下
   CString aboutMsg;
-  aboutMsg.Format(L"PMB Clock 0.0.2\r\nBuild time: %S %S\r\n\r\n(c) 2026 Some Software\r\nhttps://github.com/wjx0912/", __DATE__, __TIME__);
+  aboutMsg.Format(L"PMB Clock 0.0.3\r\nBuild time: %S %S\r\n\r\n(c) 2026 Your Software\r\nhttps://github.com/wjx0912/", __DATE__, __TIME__);
   AfxMessageBox(aboutMsg, MB_OK | MB_ICONINFORMATION);
 }
 
@@ -1045,13 +1046,6 @@ void CPmbClockDlg::OnCmdExitApp()
 	AfxGetMainWnd()->SendMessage(WM_CLOSE);
 }
 
-
-void CPmbClockDlg::OnCmdRestoreConfig()
-{
-	// resotre all config by WriteProfileBinary
-	theApp.WriteProfileString(_T(PROFILE_REGISTRY), nullptr, nullptr);
-	AfxMessageBox(L"Please restart the program!", MB_OK);
-}
 
 void CPmbClockDlg::AddTrayIcon()
 {
@@ -1132,4 +1126,17 @@ BOOL CPmbClockDlg::PreTranslateMessage(MSG* pMsg)
 	}
 
 	return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+void CPmbClockDlg::OnCmdRestoreConfig()
+{
+	// resotre all config by WriteProfileBinary
+	theApp.WriteProfileString(_T(PROFILE_REGISTRY), nullptr, nullptr);
+
+	{
+		// TODO
+		AfxMessageBox(L"Please restart the program!", MB_OK);
+	}
+
+	//RedrawWindow();
 }
