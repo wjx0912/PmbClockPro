@@ -7,6 +7,9 @@
 #include "PmbClock.h"
 #include "PmbClockDlg.h"
 
+#include <Shobjidl.h>   // SetCurrentProcessExplicitAppUserModelID
+#pragma comment(lib, "Shell32.lib")
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -49,6 +52,7 @@ BOOL CPmbClockApp::InitInstance()
 	// in your application.
 //	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 //	InitCommonControlsEx(&InitCtrls);
+	HRESULT hr = SetCurrentProcessExplicitAppUserModelID(L"com.wjx0912.PmbClock");
 
 	CWinApp::InitInstance();
 
